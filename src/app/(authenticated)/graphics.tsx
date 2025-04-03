@@ -1,10 +1,11 @@
+import ContainerAuthenticated from "@/src/components/containerAuthenticated";
 import { View, Text } from "react-native";
 
 
 export default function Graphics() {
     return (
-        <View>
+        <ContainerAuthenticated>
             <Text>teste</Text>
-        </View>
+        </ContainerAuthenticated>
     )
 }

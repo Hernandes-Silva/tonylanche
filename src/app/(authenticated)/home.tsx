@@ -1,9 +1,10 @@
-import { Text, View } from "react-native";
+import ContainerAuthenticated from "@/src/components/containerAuthenticated";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function Home() {
     return (
-        <View>
+        <ContainerAuthenticated>
             <Text>Home</Text>
-        </View>
+        </ContainerAuthenticated>
     )
 }

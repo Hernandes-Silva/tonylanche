@@ -1,12 +1,15 @@
+import Header from "@/src/components/header"
 import { Tabs } from "expo-router"
-console.log("oushh")
+
 export default function TLayout() {
-    console.log("aquiii22222")
     return (
-        <Tabs initialRouteName="home">
-            <Tabs.Screen name="index" />
-            <Tabs.Screen name="home" />
-            <Tabs.Screen name="graphics" />
-        </Tabs>
+        <>
+            <Header title="Finance Lanche"/>
+            <Tabs screenOptions={{headerShown: false}}>
+                <Tabs.Screen name="index" options={{href: null}}/>
+                <Tabs.Screen name="home" />
+                <Tabs.Screen name="graphics" />
+            </Tabs>
+        </>
     )
 }
