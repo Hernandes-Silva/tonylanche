@@ -1,44 +1,50 @@
-import React, { useState, useMemo } from 'react'
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Pressable } from "react-native";
+import React, { useState, useMemo, useEffect } from 'react'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
 import ContainerAuthenticated from "@/src/components/containerAuthenticated";
-import {ProductType} from "@/src/constants/types"
+import {ProductType} from "@/src/types/productType"
 import { ProductCard } from '@/src/components/productCard';
 import CategorySelect from '@/src/components/categorySelect';
+import { ProductContainsValue } from '@/src/utils/utils';
+import { getProducts } from '@/src/services/productsService';
+import { getCategories } from '@/src/services/categoriesService';
 
-const productsData: ProductType[] = [
-    { uuid: '1', title: 'Coca-Cola', value: 5, category: 'Bebidas' },
-    { uuid: '2', title: 'Café', value: 3, category: 'Bebidas' },
-    { uuid: '3', title: 'X-Tudo', value: 15.5, category: 'Lanches' },
-    { uuid: '4', title: 'Pastel', value: 8, category: 'Lanches' },
-    { uuid: '5', title: 'Suco Natural', value: 6, category: 'Bebidas' },
-    { uuid: '6', title: 'Batata Frita', value: 10, category: 'Acompanhamentos' },
-    { uuid: '7', title: 'Pastel', value: 8, category: 'Lanches' },
-    { uuid: '8', title: 'Suco Natural', value: 6, category: 'Bebidas' },
-    { uuid: '9', title: 'Batata Frita', value: 10, category: 'Acompanhamentos' },
-];
-const categories = ['Todos', 'Bebidas', 'Lanches', 'Acompanhamentos'];
+
 
 export default function Home() {
+    const [products, setProducts] = useState<ProductType[]>([]);
+    const [categories, setCategories] = useState<string[]>([]);
+    const [isLoadingListProducts, setisLoadingListProducts] = useState(true);
+    const [isLoadingListCategories, setIsLoadingListCategories] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState('Todos');
     const [search, setSearch] = useState('')
 
-    const ProductContainsValue = (product: ProductType, value: string) => {
-        return (
-            product.title.toLowerCase().includes(value.toLowerCase())
-            || product.category.toLowerCase().includes(value.toLowerCase())
-        );
-    }
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            getProducts().then(data => {
+              setProducts(data);
+              setisLoadingListProducts(false);
+            });
+            getCategories().then(data =>{
+                setCategories(data)
+                setIsLoadingListCategories(false)
+            })
+          }, 2000); // delay de 2 segundos
+          
+          return () => clearTimeout(timer)
+    }, [])
+
+
     const filteredProduct = useMemo(() => {
-        return productsData.filter((product) => {
+        return products.filter((product) => {
             const matchesCategory =
                 selectedCategory === 'Todos' || product.category === selectedCategory;
             const matchesSearch = ProductContainsValue(product, search)
             return matchesCategory && matchesSearch
         })
-    }, [selectedCategory, search])
+    }, [selectedCategory, search, products])
 
 
     const handleAddPress = (product: ProductType) => {
@@ -66,22 +72,28 @@ export default function Home() {
                             onChangeText={setSearch}
                         />
                     </View>
-                    <CategorySelect 
-                        categories={categories} 
-                        actualSelectedCategory={selectedCategory}
-                        onPressHandler={setSelectedCategory}
-                    />
+                    {
+                        isLoadingListCategories ? (<ActivityIndicator style={{ marginTop: 40 }} />):
+                        <CategorySelect 
+                            categories={categories} 
+                            actualSelectedCategory={selectedCategory}
+                            onPressHandler={setSelectedCategory}
+                        />
+                    }
                 </View>
-
+                
                 <View style={styles.listContainer}>
-                    <FlatList
-                        data={filteredProduct}
-                        keyExtractor={(product) => product.uuid}
-                        showsVerticalScrollIndicator={false}
-                        style={{ overflow: 'visible' }}
-                        renderItem={renderProduct}
-                        contentContainerStyle={{ paddingBottom: 16 }}
-                    />
+                    {
+                        isLoadingListProducts ? (<ActivityIndicator style={{ marginTop: 40 }} />):
+                        <FlatList
+                            data={filteredProduct}
+                            keyExtractor={(product) => product.uuid}
+                            showsVerticalScrollIndicator={false}
+                            style={{ overflow: 'visible' }}
+                            renderItem={renderProduct}
+                            contentContainerStyle={{ paddingBottom: 16 }}
+                        />
+                    }
 
                 </View>
             </View>

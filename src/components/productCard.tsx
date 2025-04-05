@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
-import {ProductType} from "@/src/constants/types"
+import {ProductType} from "@/src/types/productType"
 
 type ProductCardProps = {
     product: ProductType;

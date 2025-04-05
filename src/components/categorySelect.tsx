@@ -1,9 +1,7 @@
 import React from 'react'
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Pressable } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, ScrollView, Pressable } from "react-native";
 
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
-import { ProductType } from "@/src/constants/types"
 
 type CategorySelectProps = {
     categories: string[];
