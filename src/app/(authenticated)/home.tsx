@@ -4,12 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
 import ContainerAuthenticated from "@/src/components/containerAuthenticated";
-type ProductType = {
-    uuid: string;
-    title: string;
-    value: number;
-    category: string;
-}
+import {ProductType} from "@/src/constants/types"
+import { ProductCard } from '@/src/components/productCard';
+import CategorySelect from '@/src/components/categorySelect';
+
 const productsData: ProductType[] = [
     { uuid: '1', title: 'Coca-Cola', value: 5, category: 'Bebidas' },
     { uuid: '2', title: 'Café', value: 3, category: 'Bebidas' },
@@ -42,42 +40,17 @@ export default function Home() {
         })
     }, [selectedCategory, search])
 
-    const renderCategory = (category: string) => (
-        <Pressable
-            key={category}
-            style={[
-                styles.categoryCard,
-                selectedCategory === category && styles.categoryCardSelected,
-            ]}
-            onPress={() => setSelectedCategory(category)}
-        >
-            <Text
-                style={[
-                    styles.categoryText,
-                    selectedCategory === category && styles.categoryTextSelected,
-                ]}
-            >
-                {category}
-            </Text>
-        </Pressable>
-    );
-
 
     const handleAddPress = (product: ProductType) => {
         console.log("Adicionar:", product.title);
     };
 
     const renderProduct: ({ item }: { item: ProductType }) => JSX.Element = ({ item }) => (
-        <View style={styles.productContainer}>
-            <View style={styles.textContainer}>
-                <View></View>
-                <Text style={styles.title}>{item.title}</Text>
-                <Text style={styles.value}>R$ {item.value.toFixed(2)}</Text>
-            </View>
-            <TouchableOpacity onPress={() => handleAddPress(item)}>
-                <Ionicons name="add-circle-outline" size={50} color="blue" />
-            </TouchableOpacity>
-        </View>
+        <ProductCard 
+            product={item}
+            onPressHandler={handleAddPress} 
+            icon={<Ionicons name="add-circle-outline" size={50} color="blue" />}
+        />
     );
 
 
@@ -93,13 +66,11 @@ export default function Home() {
                             onChangeText={setSearch}
                         />
                     </View>
-                    <ScrollView
-                        horizontal
-                        showsHorizontalScrollIndicator={false}
-                        style={styles.categoryContainer}
-                    >
-                        {categories.map(renderCategory)}
-                    </ScrollView>
+                    <CategorySelect 
+                        categories={categories} 
+                        actualSelectedCategory={selectedCategory}
+                        onPressHandler={setSelectedCategory}
+                    />
                 </View>
 
                 <View style={styles.listContainer}>
@@ -135,55 +106,10 @@ const styles = StyleSheet.create({
         ...roundedCardWithShadow
     },
 
-    // Category
-    categoryContainer: {
-        flexGrow: 0,
-        paddingBottom: 5,
-        paddingTop: 10,
-    },
-    categoryCard: {
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: '#eee',
-        marginRight: 8,
-        ...roundedCardWithShadow
-    },
-    categoryCardSelected: {
-        backgroundColor: '#007AFF',
-    },
-    categoryText: {
-        color: '#333',
-        fontWeight: '500',
-    },
-    categoryTextSelected: {
-        color: '#fff',
-    },
 
     // Product List
     listContainer: {
         flex: 1,
-    },
-    productContainer: {
-        marginTop: 10,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: '#fff',
-        ...roundedCardWithShadow
-
-    },
-    textContainer: {
-        flex: 1,
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: "bold",
-        borderBottomColor: "silver"
-    },
-    value: {
-        fontSize: 18,
-        color: "#0077b6",
-        fontWeight: "bold",
     },
 
 });
