@@ -8,6 +8,7 @@ export default function TLayout() {
             <Tabs screenOptions={{headerShown: false}}>
                 <Tabs.Screen name="index" options={{href: null}}/>
                 <Tabs.Screen name="home" />
+                <Tabs.Screen name="historic" />
                 <Tabs.Screen name="graphics" />
             </Tabs>
         </>
