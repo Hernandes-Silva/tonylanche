@@ -1,5 +1,5 @@
 import {FC, ReactNode} from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 
 type Props = {
     children: ReactNode,
@@ -7,9 +7,10 @@ type Props = {
 
 const ContainerAuthenticated: FC<Props> = ({children}) => {
     return (
-        <View style={styles.container}>
+        
+        <SafeAreaView style={styles.container}>
             {children}
-        </View>
+        </SafeAreaView>
     )
 }
 
