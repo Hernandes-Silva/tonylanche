@@ -9,7 +9,9 @@ import DateInput from '@/src/components/dateInput';
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
 import { getGraphics } from '@/src/services/graphicsService';
 import { ChartData } from 'react-native-chart-kit/dist/HelperTypes';
-import { ResponseGraphics, ResponseLineChartType } from '@/src/types/graphicsTypes';
+import { ResponseBarChartType, ResponseGraphics, ResponseLineChartType, ResponsePieChartType } from '@/src/types/graphicsTypes';
+import { generateUniqueColors } from '@/src/utils/utils';
+import CategorySalesTable from '@/src/components/categorySalesTable';
 
 
 const screenWidth = Dimensions.get('window').width - 32;
@@ -38,8 +40,9 @@ export default function Graphics() {
   const [isLoading, setIsloading] = useState(true)
   const [lineChartData, setLineChartData] = useState<ChartData>(defaultCharData)
   const [lineChartByProductData, setLineChartByProductData] = useState<ChartData>(defaultCharData)
-  const [barChartData, setbarChartData] = useState<ChartData>()
-  const [pieChartData, setPieChartData] = useState<any>([])
+  const [barChartData, setBarChartData] = useState<ChartData>(defaultCharData)
+  const [pieChartData, setPieChartData] = useState<any[]>([])
+  const [pieChartResponse, setPieChartResponse] = useState<any[]>([])
   const [selectedFilterDropdown, setSelectedFilterDropdwon] = useState<string>(FilterType.Day)
   const [tooltip1, setTooltip1] = useState({ x: 0, y: 0, value: 0, visible: false });
   const [tooltip2, setTooltip2] = useState({ x: 0, y: 0, value: 0, visible: false });
@@ -61,7 +64,10 @@ export default function Graphics() {
   }, [])
 
   const generateGraphicsData = (response: ResponseGraphics) => {
-    generateLineChartData(response.data.lineChart)
+    generateLineChartData(response.data.lineChart);
+    generateBarChartData(response.data.barChart);
+    generatePieChartData(response.data.pieChart);
+    setPieChartResponse(response.data.pieChart)
   }
 
   const generateLineChartData = (data: ResponseLineChartType[]) => {
@@ -76,9 +82,36 @@ export default function Graphics() {
     const datasets = { data: dataSetLineChart }
     const datasetsByProducts = { data: dataSetLineByProduct }
     setLineChartData({ labels: labelsLineChart, datasets: [datasets] })
-    setLineChartByProductData({ labels: labelsLineChart, datasets: [datasets] })
+    setLineChartByProductData({ labels: labelsLineChart, datasets: [datasetsByProducts] })
   }
 
+  const generateBarChartData = (data: ResponseBarChartType[]) => {
+    var labelsBarChart: string[] = []
+    var dataSetBarChart: number[] = []
+    data.forEach((item) => {
+      labelsBarChart.push(item.productName)
+      dataSetBarChart.push(item.numberProductsSales.valueOf())
+    })
+    const datasets = { data: dataSetBarChart.slice(0,5) }
+  
+    setBarChartData({ labels: labelsBarChart.slice(0,5), datasets: [datasets] })
+  }
+
+  const generatePieChartData = (data: ResponsePieChartType[]) => {
+    var list_categories_data: any[] = []
+    var colors: string[] = generateUniqueColors(data.length)
+    data.forEach((item, index) => {
+      list_categories_data.push({
+          name: item.categoryName,
+          population: item.percentageProductsSales,
+          color: colors[index],
+          legendFontColor: '#000',
+          legendFontSize: 12,
+        })
+    })
+  
+    setPieChartData(list_categories_data)
+  }
 
   const Tooltip = ({ x, y, value, visible }: any) => {
     if (!visible) return null;
@@ -167,10 +200,7 @@ export default function Graphics() {
             >
               <Text style={styles.graphicsDescription}>Valor Total Produtos Vendidos</Text>
               <LineChart
-                data={{
-                  labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Seg'],
-                  datasets: [{ data: [120, 180, 100, 200, 150, 120, 180, 100, 200, 150, 150, 120] }],
-                }}
+                data={lineChartByProductData}
                 width={screenWidth}
                 height={220}
                 yAxisLabel="$"
@@ -192,14 +222,9 @@ export default function Graphics() {
             <Tooltip {...tooltip2} />
 
 
-
-
-            <Text style={styles.graphicsTitle}>📊 Vendas por Produto</Text>
+            <Text style={styles.graphicsTitle}>📊 5 Produtos mais vendido</Text>
             <BarChart
-              data={{
-                labels: ['Café', 'Pão', 'Suco'],
-                datasets: [{ data: [90, 70, 40] }],
-              }}
+              data={barChartData}
               yAxisSuffix=""
               yAxisLabel=""
               width={screenWidth}
@@ -212,22 +237,7 @@ export default function Graphics() {
 
             <Text style={styles.graphicsTitle}>🔵 Categorias Vendidas</Text>
             <PieChart
-              data={[
-                {
-                  name: 'Bebidas',
-                  population: 40,
-                  color: '#f00',
-                  legendFontColor: '#000',
-                  legendFontSize: 12,
-                },
-                {
-                  name: 'Lanches',
-                  population: 60,
-                  color: '#0f0',
-                  legendFontColor: '#000',
-                  legendFontSize: 12,
-                },
-              ]}
+              data={pieChartData}
               width={screenWidth}
               height={220}
               chartConfig={chartConfig}
@@ -236,6 +246,8 @@ export default function Graphics() {
               paddingLeft="15"
               style={styles.graphicsStyles}
             />
+
+            <CategorySalesTable data={pieChartResponse} />
           </View>
         }
       </ScrollView>

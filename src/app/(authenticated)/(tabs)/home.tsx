@@ -14,6 +14,7 @@ import { getCategories } from '@/src/services/categoriesService';
 
 
 export default function Home() {
+    console.log("aqui home")
     const [products, setProducts] = useState<ProductType[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [isLoadingListProducts, setisLoadingListProducts] = useState(true);

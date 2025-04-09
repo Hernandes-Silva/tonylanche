@@ -23,13 +23,13 @@ const mockBarChartData: ResponseBarChartType[] = [
 
 
 const mockPieChartData: ResponsePieChartType[] = [ 
-    {categoryName: "X-Tudo", numberProductsSales:180, valueProductsSales:511.5},
-    {categoryName: "X-salada", numberProductsSales:120, valueProductsSales:350.5},
-    {categoryName: "X-frango", numberProductsSales:135, valueProductsSales:400.5},
-    {categoryName: "Suco", numberProductsSales:100, valueProductsSales:120.5},
-    {categoryName: "X-baicon", numberProductsSales:110, valueProductsSales:330.5},
-    {categoryName: "Coca-cola", numberProductsSales:150, valueProductsSales:260.5},
-    {categoryName: "Pizza", numberProductsSales:130, valueProductsSales:140.5}
+    {categoryName: "X-Tudo", percentageProductsSales:40, numberProductsSales:40},
+    {categoryName: "X-salada", percentageProductsSales:10, numberProductsSales:10},
+    {categoryName: "X-frango", percentageProductsSales:5, numberProductsSales:5},
+    {categoryName: "Suco", percentageProductsSales:20, numberProductsSales:20},
+    {categoryName: "X-baicon", percentageProductsSales:5, numberProductsSales:5},
+    {categoryName: "Coca-cola", percentageProductsSales:10, numberProductsSales:10},
+    {categoryName: "Pizza", percentageProductsSales:10,numberProductsSales:10}
 ]
 
 
