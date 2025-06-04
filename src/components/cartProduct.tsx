@@ -36,7 +36,7 @@ export const CartTable: React.FC<Props> = ({ cartProducts, onAddPress }) => {
           <View key={uuid} style={styles.row}>
             <Text style={styles.cell}>{product.title}</Text>
             <Text style={styles.cell}>{product.quantity}</Text>
-            <Text style={styles.cell}>R$ {product.price.toFixed(2)}</Text>
+            <Text style={styles.cell}>R$ {(product.price*product.quantity).toFixed(2)}</Text>
           </View>
         ))}
       </ScrollView>

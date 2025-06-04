@@ -5,3 +5,7 @@ export type ProductType = {
     value: number;
     category: string;
 }
+
+export type HistoricProduct = ProductType & {
+  quantity?: number;
+};

@@ -3,10 +3,17 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
-import {ProductType} from "@/src/types/productType"
+import {HistoricProduct, ProductType} from "@/src/types/productType"
 
+
+export type ProductProps = {
+    uuid: string;
+    title: string;
+    value: number;
+    category: string;
+} 
 type ProductCardProps = {
-    product: ProductType;
+    product: HistoricProduct;
     onPressHandler: (product: ProductType) => void;
     icon: React.ReactNode;
 };
@@ -17,6 +24,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onPressHandle
                 <View></View>
                 <Text style={styles.title}>{product.title}</Text>
                 <Text style={styles.value}>R$ {product.value.toFixed(2)}</Text>
+            </View>
+            {
+                product.quantity? (
+                    <View style={styles.textQuantity}><Text>{product.quantity}</Text></View>
+                ): null
+            }
+            <View>
+
             </View>
             <TouchableOpacity onPress={() => onPressHandler(product)}>
                 {icon}
@@ -92,5 +107,8 @@ const styles = StyleSheet.create({
         color: "#0077b6",
         fontWeight: "bold",
     },
+    textQuantity: {
+        marginRight: 20
+    }
 
 });
