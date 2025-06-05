@@ -60,8 +60,8 @@ export default function Home() {
                     ...prev,
                     [uuid]: {
                         quantity: existingItem.quantity + 1,
-                        title: product.title,
-                        price: product.value
+                        title: product.name,
+                        price: product.price
                     },
                 };
             }
@@ -71,8 +71,8 @@ export default function Home() {
                 ...prev,
                 [uuid]: {
                     quantity: 1,
-                    title: product.title,
-                    price: product.value
+                    title: product.name,
+                    price: product.price
                 },
             };
         });

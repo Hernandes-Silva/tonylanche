@@ -1,8 +1,8 @@
 
 export type ProductType = {
     uuid: string;
-    title: string;
-    value: number;
+    name: string;
+    price: number;
     category: string;
 }
 

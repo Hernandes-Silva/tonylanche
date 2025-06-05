@@ -22,8 +22,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onPressHandle
         <View style={styles.productContainer}>
             <View style={styles.textContainer}>
                 <View></View>
-                <Text style={styles.title}>{product.title}</Text>
-                <Text style={styles.value}>R$ {product.value.toFixed(2)}</Text>
+                <Text style={styles.title}>{product.name}</Text>
+                <Text style={styles.value}>R$ {product.price.toFixed(2)}</Text>
             </View>
             {
                 product.quantity? (

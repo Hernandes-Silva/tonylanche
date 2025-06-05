@@ -66,11 +66,11 @@ export default function Historic() {
 
     const total = productsArray.reduce((sum, [, product]) => {
         var quantiy = product.quantity ? product.quantity : 0
-        return sum + product.value * quantiy;
+        return sum + product.price * quantiy;
     }, 0);
 
     const handleAddPress = (product: ProductType) => {
-        console.log("Adicionar:", product.title);
+        console.log("Adicionar:", product.name);
     };
 
     const renderProduct: ({ item }: { item: ProductType }) => JSX.Element = ({ item }) => (
