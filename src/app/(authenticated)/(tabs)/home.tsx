@@ -78,6 +78,12 @@ export default function Home() {
         });
     };
 
+    const handleSalesAddPress = (sales: CartProductMap) => {
+        // chamar endpoint
+
+        setCartProducts({})
+    }
+
     const renderProduct: ({ item }: { item: ProductType }) => JSX.Element = ({ item }) => (
         <ProductCard
             product={item}
@@ -85,6 +91,8 @@ export default function Home() {
             icon={<Ionicons name="add-circle-outline" size={50} color="blue" />}
         />
     );
+
+
 
 
     return (
@@ -130,7 +138,7 @@ export default function Home() {
             {
                 Object.keys(cartProducts).length ? (
                     <View style={styles.cartContainer}>
-                        <CartTable cartProducts={cartProducts} onAddPress={() => console.log("Adicionar produto")}/>
+                        <CartTable cartProducts={cartProducts} onAddPress={handleSalesAddPress}/>
                     </View>
                 ) : null
             }

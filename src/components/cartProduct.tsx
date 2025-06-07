@@ -11,7 +11,7 @@ import { CartProductMap } from "@/src/types/cartTypes";
 
 interface Props {
   cartProducts: CartProductMap;
-  onAddPress: () => void;
+  onAddPress: (sales: CartProductMap) => void;
 }
 
 export const CartTable: React.FC<Props> = ({ cartProducts, onAddPress }) => {
@@ -48,7 +48,7 @@ export const CartTable: React.FC<Props> = ({ cartProducts, onAddPress }) => {
 
       {/* Botão */}
       <View style={styles.buttonContainer}>
-        <Button title="Adicionar" onPress={onAddPress} />
+        <Button title="Adicionar"  onPress={() => onAddPress(cartProducts)} />
       </View>
     </View>
   );
