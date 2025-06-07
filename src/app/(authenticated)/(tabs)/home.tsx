@@ -9,7 +9,7 @@ import { ProductCard } from '@/src/components/productCard';
 import CategorySelect from '@/src/components/categorySelect';
 import { ProductContainsValue } from '@/src/utils/utils';
 import { getProducts } from '@/src/services/productsService';
-import { getCategories } from '@/src/services/categoriesService';
+import { getCategories, getCategoriesNames } from '@/src/services/categoriesService';
 import { CartTable } from '@/src/components/cartProduct';
 import { CartProductMap } from '@/src/types/cartTypes';
 
@@ -24,25 +24,24 @@ export default function Home() {
     const [cartProducts, setCartProducts] = useState<CartProductMap>({})
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            getProducts().then(data => {
-                setProducts(data);
-                setisLoadingListProducts(false);
-            });
-            getCategories().then(data => {
-                setCategories(data)
-                setIsLoadingListCategories(false)
-            })
-        }, 2000); // delay de 2 segundos
-
-        return () => clearTimeout(timer)
+       
+        getProducts().then(data => {
+            console.log(data)
+            setProducts(data);
+            setisLoadingListProducts(false);
+        });
+        getCategoriesNames().then(data => {
+            data.unshift("Todos")
+            setCategories(data)
+            setIsLoadingListCategories(false)
+        })
     }, [])
 
 
     const filteredProduct = useMemo(() => {
         return products.filter((product) => {
             const matchesCategory =
-                selectedCategory === 'Todos' || product.category === selectedCategory;
+                selectedCategory === 'Todos' || product.category_name === selectedCategory;
             const matchesSearch = ProductContainsValue(product, search)
             return matchesCategory && matchesSearch
         })

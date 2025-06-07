@@ -1,9 +1,19 @@
 import { Stack } from "expo-router";
 import { AuthProvider, useAuth } from "../hooks/useAuth";
+import { View, ActivityIndicator } from "react-native";
 
 const RootLayout = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
   console.log(isAuthenticated)
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#0077b6" />
+      </View>
+    );
+  }
+
   return (
       <Stack screenOptions={{headerShown: false}}> 
         {isAuthenticated ? (

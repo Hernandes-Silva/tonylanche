@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
@@ -11,25 +11,31 @@ import {
 } from 'react-native';
 
 import styles from '@/src/styles/tableDefaultStyle'; 
+import { createCategory, getCategories } from '@/src/services/categoriesService';
 
 type Category = {
-    id: string;
+    uuid: string;
     name: string;
 };
 
+type CreateCategory = {
+    name: string;
+}
 export default function CategoryScreen() {
     const [categories, setCategories] = useState<Category[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
     const [name, setName] = useState('');
 
+    useEffect(() => {
+        getCategories().then(data => {
+            setCategories(data)
+        })
+    }, [])
 
-    const addCategory = () => {
+    const addCategory = async () => {
         if (!name) return;
 
-        const newCategory: Category = {
-            id: Date.now().toString(),
-            name
-        };
+        var newCategory = await createCategory(name)
 
         setCategories((prev) => [...prev, newCategory]);
         setName('');
@@ -60,7 +66,7 @@ export default function CategoryScreen() {
             {/* Lista de produtos */}
             <FlatList
                 data={categories}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.uuid}
                 renderItem={renderItem}
             />
 
@@ -68,9 +74,9 @@ export default function CategoryScreen() {
             <Modal visible={modalVisible} animationType="slide" transparent>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Novo Produto</Text>
+                        <Text style={styles.modalTitle}>Nova Categoria</Text>
                         <TextInput
-                            placeholder="Nome do Produto"
+                            placeholder="Nome da Categoria"
                             value={name}
                             onChangeText={setName}
                             style={styles.input}

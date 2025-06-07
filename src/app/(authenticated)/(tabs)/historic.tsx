@@ -11,7 +11,7 @@ import { ProductCard } from '@/src/components/productCard';
 import CategorySelect from '@/src/components/categorySelect';
 import { ProductContainsValue } from '@/src/utils/utils';
 import DateInput from '@/src/components/dateInput'
-import { getCategories } from '@/src/services/categoriesService';
+import { getCategories, getCategoriesNames } from '@/src/services/categoriesService';
 import { getSalesByDate } from '@/src/services/salesService';
 
 
@@ -30,7 +30,7 @@ export default function Historic() {
                 setProducts(data);
                 setisLoadingListProducts(false);
             });
-            getCategories().then(data => {
+            getCategoriesNames().then(data => {
                 setCategories(data)
                 setIsLoadingListCategories(false)
             })
