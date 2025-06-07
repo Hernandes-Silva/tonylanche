@@ -20,3 +20,9 @@ export async function createCategory(name: string): Promise<CategoryType> {
     var category: CategoryType = response.data
     return category
 }
+
+export async function updateCategory(uuid:string, name: string): Promise<CategoryType> {
+    const response = await api.put('/categories/'+uuid, {"name": name});
+    var category: CategoryType = response.data
+    return category
+}

@@ -17,7 +17,6 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
     response => response,
     async error => {
-        console.log("aquii", error.response)
         const originalRequest = error.config;
 
         // Se o access token expirar
