@@ -4,7 +4,7 @@ export type ProductType = {
     name: string;
     price: number;
     category_name: string;
-    category_uuid: string
+    category_uuid: string;
 }
 
 export type HistoricProduct = ProductType & {

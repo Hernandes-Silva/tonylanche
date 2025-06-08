@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Pressable, Platform, ActivityIndicator } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
@@ -12,7 +13,7 @@ import CategorySelect from '@/src/components/categorySelect';
 import { ProductContainsValue } from '@/src/utils/utils';
 import DateInput from '@/src/components/dateInput'
 import { getCategories, getCategoriesNames } from '@/src/services/categoriesService';
-import { getSalesByDate } from '@/src/services/salesService';
+import { getSalesByDate, removeProductFromHistoric } from '@/src/services/salesService';
 
 
 export default function Historic() {
@@ -24,38 +25,35 @@ export default function Historic() {
     const [selectedCategory, setSelectedCategory] = useState('Todos');
     const [search, setSearch] = useState('')
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
+    useFocusEffect(
+        useCallback(() => {
             getSalesByDate(selectedDate).then(data => {
                 setProducts(data);
                 setisLoadingListProducts(false);
             });
             getCategoriesNames().then(data => {
+                data.unshift("Todos")
                 setCategories(data)
                 setIsLoadingListCategories(false)
             })
-        }, 2000);
 
-        return () => clearTimeout(timer)
-    }, [])
+        }, []) // sem dependências: roda toda vez que a tela for focada
+    );
 
     useEffect(() => {
         setProducts([])
         setisLoadingListProducts(true);
-        const timer = setTimeout(() => {
-            getSalesByDate(selectedDate).then(data => {
-                setProducts(data);
-                setisLoadingListProducts(false);
-            });
-        }, 2000);
 
-        return () => clearTimeout(timer)
+        getSalesByDate(selectedDate).then(data => {
+            setProducts(data);
+            setisLoadingListProducts(false);
+        });
     }, [selectedDate])
 
     const filteredProduct = useMemo(() => {
         return products.filter((product) => {
             const matchesCategory =
-                selectedCategory === 'Todos' || product.category === selectedCategory;
+                selectedCategory === 'Todos' || product.category_name === selectedCategory;
             const matchesSearch = ProductContainsValue(product, search)
             return matchesCategory && matchesSearch
         })
@@ -69,11 +67,31 @@ export default function Historic() {
         return sum + product.price * quantiy;
     }, 0);
 
-    const handleAddPress = (product: ProductType) => {
-        console.log("Adicionar:", product.name);
+    const handleAddPress = async (product: HistoricProduct) => {
+        console.log("remove:", product.name);
+        try {
+            await removeProductFromHistoric(product.uuid)
+            if (product.quantity) product.quantity -= 1
+
+            const productUpdated = product
+            if (productUpdated.quantity && productUpdated.quantity > 0) {
+                setProducts((prev) =>
+                    prev.map((item) =>
+                        item.uuid === productUpdated.uuid ? productUpdated : item
+                    ));
+            } else {
+                setProducts((prev) =>
+                    prev.filter((item) => item.uuid !== productUpdated.uuid)
+                );
+            }
+            alert("Removido com sucesso !")
+
+        } catch (error) {
+            alert("Erro ao remover " + error)
+        }
     };
 
-    const renderProduct: ({ item }: { item: ProductType }) => JSX.Element = ({ item }) => (
+    const renderProduct: ({ item }: { item: HistoricProduct }) => JSX.Element = ({ item }) => (
         <ProductCard
             product={item}
             onPressHandler={handleAddPress}
@@ -130,7 +148,7 @@ export default function Historic() {
                     </View>
                 </View>
             </ContainerAuthenticated>
-            <View style={{backgroundColor: "white"}}>
+            <View style={{ backgroundColor: "white" }}>
                 <Text style={styles.totalText}>
                     Total: R$ {total.toFixed(2)}
                 </Text>
@@ -171,7 +189,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         textAlign: "center",
         marginBottom: 10,
-        marginTop:10,
+        marginTop: 10,
     },
 
 });
