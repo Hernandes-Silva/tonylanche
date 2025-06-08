@@ -37,7 +37,7 @@ export default function Historic() {
                 setIsLoadingListCategories(false)
             })
 
-        }, []) // sem dependências: roda toda vez que a tela for focada
+        }, [])
     );
 
     useEffect(() => {

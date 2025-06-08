@@ -9,7 +9,8 @@ export type ResponseLineChartType = {
 export type ResponseBarChartType = {
   productName: string,
   numberProductsSales: Number,
-  valueProductsSales: Number
+  valueProductsSales: Number,
+  percentageProductsSales: Number,
 }
 export type ResponsePieChartType = {
   categoryName: string,

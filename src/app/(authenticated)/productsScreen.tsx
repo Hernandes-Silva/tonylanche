@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useEffect, useState, useCallback } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import {
@@ -16,6 +16,7 @@ import { getCategories } from '@/src/services/categoriesService';
 import { Ionicons } from '@expo/vector-icons';
 import { createProduct, getProducts, updateProduct } from '@/src/services/productsService';
 import { CreateProductType, ProductType } from "@/src/types/productType"
+import { useFocusEffect } from '@react-navigation/native';
 
 
 type CategoryDropdown = {
@@ -36,24 +37,25 @@ export default function ProductScreen() {
     const [isUpdate, setIsUpdate] = useState(false)
     const [updateId, setUpdateId] = useState('')
 
-
-    useEffect(() => {
-        getCategories().then(data => {
-            const categoriasConvertidas = data.map(cat => ({
-                label: cat.name,
-                value: cat.uuid,
-            }));
-            setCategories(categoriasConvertidas)
-        })
-        getProducts().then(data =>{
-            setProducts(data)
-        })
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            getCategories().then(data => {
+                const categoriasConvertidas = data.map(cat => ({
+                    label: cat.name,
+                    value: cat.uuid,
+                }));
+                setCategories(categoriasConvertidas)
+            })
+            getProducts().then(data => {
+                setProducts(data)
+            })
+        }, [])
+    );
 
     const handleSave = async () => {
         if (!name || !category || !price) return;
 
-        if(isUpdate){
+        if (isUpdate) {
             return await editProduct()
         }
 
@@ -71,9 +73,9 @@ export default function ProductScreen() {
 
     const addProduct = async () => {
         const newProduct: CreateProductType = {
-            name:name,
+            name: name,
             price: parseFloat(price),
-            category_uuid:category,
+            category_uuid: category,
         };
 
         const response = await createProduct(newProduct)
@@ -86,16 +88,16 @@ export default function ProductScreen() {
 
     const editProduct = async () => {
         const newProduct: CreateProductType = {
-            name:name,
+            name: name,
             price: parseFloat(price),
-            category_uuid:category,
+            category_uuid: category,
         };
 
         const updatedProduct = await updateProduct(newProduct, updateId)
         setProducts((prev) =>
             prev.map((product) =>
                 product.uuid === updateId ? updatedProduct : product
-        ));
+            ));
 
         setIsUpdate(false)
         setName('')

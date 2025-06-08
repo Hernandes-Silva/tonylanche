@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView, Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
@@ -9,11 +9,13 @@ import { ProductCard } from '@/src/components/productCard';
 import CategorySelect from '@/src/components/categorySelect';
 import { ProductContainsValue } from '@/src/utils/utils';
 import { getProducts } from '@/src/services/productsService';
-import { getCategories, getCategoriesNames } from '@/src/services/categoriesService';
+import { getCategoriesNames } from '@/src/services/categoriesService';
 import { CartTable } from '@/src/components/cartProduct';
 import { CartProductMap } from '@/src/types/cartTypes';
 import { CreateSaleType, CreateListSaleType } from '@/src/types/salesType';
 import { createSale } from '@/src/services/salesService';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 export default function Home() {
     const [products, setProducts] = useState<ProductType[]>([]);
@@ -24,19 +26,20 @@ export default function Home() {
     const [search, setSearch] = useState('')
     const [cartProducts, setCartProducts] = useState<CartProductMap>({})
 
-    useEffect(() => {
-
-        getProducts().then(data => {
-            console.log(data)
-            setProducts(data);
-            setisLoadingListProducts(false);
-        });
-        getCategoriesNames().then(data => {
-            data.unshift("Todos")
-            setCategories(data)
-            setIsLoadingListCategories(false)
-        })
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            getProducts().then(data => {
+                console.log(data)
+                setProducts(data);
+                setisLoadingListProducts(false);
+            });
+            getCategoriesNames().then(data => {
+                data.unshift("Todos")
+                setCategories(data)
+                setIsLoadingListCategories(false)
+            })
+        }, [])
+    );
 
 
     const filteredProduct = useMemo(() => {
@@ -84,15 +87,15 @@ export default function Home() {
             quantity: product.quantity,
         }));
 
-        try{
-            await createSale({"list_sale_items": list_sale_items})
+        try {
+            await createSale({ "list_sale_items": list_sale_items })
             setCartProducts({})
             alert("Adicionado com sucesso!")
 
         } catch (error) {
-            alert("Erro ao adicionar "+ error)
+            alert("Erro ao adicionar " + error)
         }
-        
+
     }
 
     const renderProduct: ({ item }: { item: ProductType }) => JSX.Element = ({ item }) => (

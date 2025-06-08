@@ -8,17 +8,18 @@ const mockLineChartData: ResponseLineChartType[] = [
     {label: "Qui", numberProductsSales:5, valueProductsSales:120.5},
     {label: "Sex", numberProductsSales:20, valueProductsSales:130.5},
     {label: "Sab", numberProductsSales:10, valueProductsSales:160.5},
-    {label: "Dom", numberProductsSales:10, valueProductsSales:140.5}
+    {label: "Dom", numberProductsSales:10, valueProductsSales:140.5},
+    
 ]
 
 const mockBarChartData: ResponseBarChartType[] = [ 
-    {productName: "X-Tudo", numberProductsSales:180, valueProductsSales:511.5},
-    {productName: "X-salada", numberProductsSales:120, valueProductsSales:350.5},
-    {productName: "X-frango", numberProductsSales:135, valueProductsSales:400.5},
-    {productName: "Suco", numberProductsSales:100, valueProductsSales:120.5},
-    {productName: "X-baicon", numberProductsSales:110, valueProductsSales:330.5},
-    {productName: "Coca-cola", numberProductsSales:150, valueProductsSales:260.5},
-    {productName: "Pizza", numberProductsSales:130, valueProductsSales:140.5}
+    {productName: "X-Tudo", numberProductsSales:180, valueProductsSales:511.5, percentageProductsSales:10},
+    {productName: "X-salada", numberProductsSales:120, valueProductsSales:350.5, percentageProductsSales:10},
+    {productName: "X-frango", numberProductsSales:135, valueProductsSales:400.5, percentageProductsSales:10},
+    {productName: "Suco", numberProductsSales:100, valueProductsSales:120.5, percentageProductsSales:10},
+    {productName: "X-baicon", numberProductsSales:110, valueProductsSales:330.5, percentageProductsSales:10},
+    {productName: "Coca-cola", numberProductsSales:150, valueProductsSales:260.5, percentageProductsSales:10},
+    {productName: "Pizza", numberProductsSales:130, valueProductsSales:140.5, percentageProductsSales:40}
 ]
 
 

@@ -44,10 +44,6 @@ export default function Graphics() {
   const [pieChartData, setPieChartData] = useState<any[]>([])
   const [pieChartResponse, setPieChartResponse] = useState<any[]>([])
   const [selectedFilterDropdown, setSelectedFilterDropdwon] = useState<string>(FilterType.Day)
-  const [tooltip1, setTooltip1] = useState({ x: 0, y: 0, value: 0, visible: false });
-  const [tooltip2, setTooltip2] = useState({ x: 0, y: 0, value: 0, visible: false });
-  const [chart1Layout, setChart1Layout] = useState({ x: 0, y: 0 });
-  const [chart2Layout, setChart2Layout] = useState({ x: 0, y: 0 });
   const [finalDate, setfinalDate] = useState((new Date()))
   const [initialDate, setinitialDate] = useState(() => {
     const date = new Date();
@@ -73,7 +69,7 @@ export default function Graphics() {
   const generateLineChartData = (data: ResponseLineChartType[]) => {
     var labelsLineChart: string[] = []
     var dataSetLineChart: number[] = []
-    var dataSetLineByProduct: number[]= []
+    var dataSetLineByProduct: number[] = []
     data.forEach((item) => {
       labelsLineChart.push(item.label)
       dataSetLineChart.push(item.numberProductsSales.valueOf())
@@ -92,9 +88,9 @@ export default function Graphics() {
       labelsBarChart.push(item.productName)
       dataSetBarChart.push(item.numberProductsSales.valueOf())
     })
-    const datasets = { data: dataSetBarChart.slice(0,5) }
-  
-    setBarChartData({ labels: labelsBarChart.slice(0,5), datasets: [datasets] })
+    const datasets = { data: dataSetBarChart.slice(0, 5) }
+
+    setBarChartData({ labels: labelsBarChart.slice(0, 5), datasets: [datasets] })
   }
 
   const generatePieChartData = (data: ResponsePieChartType[]) => {
@@ -102,25 +98,17 @@ export default function Graphics() {
     var colors: string[] = generateUniqueColors(data.length)
     data.forEach((item, index) => {
       list_categories_data.push({
-          name: item.categoryName,
-          population: item.percentageProductsSales,
-          color: colors[index],
-          legendFontColor: '#000',
-          legendFontSize: 12,
-        })
+        name: item.categoryName,
+        population: item.percentageProductsSales,
+        color: colors[index],
+        legendFontColor: '#000',
+        legendFontSize: 12,
+      })
     })
-  
+
     setPieChartData(list_categories_data)
   }
 
-  const Tooltip = ({ x, y, value, visible }: any) => {
-    if (!visible) return null;
-    return (
-      <View style={[styles.tooltip, { left: x - 30, top: y - 40 }]}>
-        <Text style={styles.tooltipText}>{value}</Text>
-      </View>
-    );
-  };
   const filterGraphics = () => {
     if (isLoading == false) {
       setIsloading(true)
@@ -163,63 +151,73 @@ export default function Graphics() {
           <View style={styles.graphicsContainer}>
             <Text style={styles.graphicsTitle}>📈 Vendas totais</Text>
             <View
-              onLayout={(event) => {
-                const { x, y } = event.nativeEvent.layout;
-                setChart1Layout({ x, y });
-              }}
             >
               <Text style={styles.graphicsDescription}>Numero Produtos vendidos</Text>
-              <LineChart
-                data={lineChartData}
-                width={screenWidth}
-                height={220}
-                fromZero
-                chartConfig={chartConfig}
-                onDataPointClick={({ value, x, y, index }) => {
-                  setTooltip1({
-                    x: x + chart1Layout.x + 10,
-                    y: y + chart1Layout.y + 20,
-                    value,
-                    visible: true,
-                  });
-                  setTimeout(() => setTooltip1({ ...tooltip1, visible: false }), 5000);
-                }}
-                bezier
-                style={styles.graphicsStyles}
-              />
+              <ScrollView horizontal style={{ overflow: 'visible' }}>
+                <LineChart
+                  data={lineChartData}
+                  width={screenWidth * 2}
+                  height={220}
+                  fromZero
+                  chartConfig={chartConfig}
+                  bezier
+                  style={styles.graphicsStyles}
+                  renderDotContent={({ x, y, index, indexData }) => (
+                    <View
+                      key={index}
+                      style={{
+                        position: 'absolute',
+                        top: y - 30,
+                        left: x - 10,
+                        backgroundColor: '#1e90ff',
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                        borderRadius: 6,
+                        zIndex: 999,
+                      }}
+                    >
+                      <Text style={styles.tooltipText}>{indexData}</Text>
+                    </View>
+                  )}
 
+                />
+              </ScrollView>
             </View>
-            <Tooltip {...tooltip1} />
-
 
             <View
-              onLayout={(event) => {
-                const { x, y } = event.nativeEvent.layout;
-                setChart2Layout({ x, y });
-              }}
             >
+
               <Text style={styles.graphicsDescription}>Valor Total Produtos Vendidos</Text>
-              <LineChart
-                data={lineChartByProductData}
-                width={screenWidth}
-                height={220}
-                yAxisLabel="$"
-                fromZero
-                chartConfig={chartConfig}
-                onDataPointClick={({ value, x, y, index }) => {
-                  setTooltip2({
-                    x: x + chart2Layout.x + 10,
-                    y: y + chart2Layout.y + 20,
-                    value,
-                    visible: true,
-                  });
-                  setTimeout(() => setTooltip2({ ...tooltip2, visible: false }), 5000);
-                }}
-                bezier
-                style={styles.graphicsStyles}
-              />
+              <ScrollView horizontal style={{ overflow: 'visible' }}>
+                <LineChart
+                  data={lineChartByProductData}
+                  width={screenWidth * 2}
+                  height={220}
+                  yAxisLabel="$"
+                  fromZero
+                  chartConfig={chartConfig}
+                  bezier
+                  style={styles.graphicsStyles}
+                  renderDotContent={({ x, y, index, indexData }) => (
+                    <View
+                      key={index}
+                      style={{
+                        position: 'absolute',
+                        top: y - 30,
+                        left: x - 20,
+                        backgroundColor: '#1e90ff',
+                        paddingHorizontal: 6,
+                        paddingVertical: 2,
+                        borderRadius: 6,
+                        zIndex: 999,
+                      }}
+                    >
+                      <Text style={styles.tooltipText}>{indexData}</Text>
+                    </View>
+                  )}
+                />
+              </ScrollView>
             </View>
-            <Tooltip {...tooltip2} />
 
 
             <Text style={styles.graphicsTitle}>📊 5 Produtos mais vendido</Text>
@@ -235,7 +233,7 @@ export default function Graphics() {
             />
 
 
-            <Text style={styles.graphicsTitle}>🔵 Categorias Vendidas</Text>
+            <Text style={styles.graphicsTitle}>🔵 Categorias Vendidos</Text>
             <PieChart
               data={pieChartData}
               width={screenWidth}
@@ -248,6 +246,7 @@ export default function Graphics() {
             />
 
             <CategorySalesTable data={pieChartResponse} />
+
           </View>
         }
       </ScrollView>
@@ -274,7 +273,7 @@ const styles = StyleSheet.create({
   },
   graphicsDescription: {
     marginLeft: 16,
-    marginBottom: 2,
+    marginBottom: 20,
   },
   graphicsStyles: {
     marginBottom: 24,
