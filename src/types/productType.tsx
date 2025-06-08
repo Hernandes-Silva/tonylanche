@@ -11,12 +11,12 @@ export type HistoricProduct = ProductType & {
   quantity?: number;
 };
 
-export type CreateProduct = {
+export type CreateProductType = {
     name: string
     price: Number
     category_uuid: string
 }
 
-export type UpdateProduct = CreateProduct & {
+export type UpdateProductType = CreateProductType & {
     uuid: string
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 import {
@@ -13,8 +13,9 @@ import {
 } from 'react-native';
 import styles from '@/src/styles/tableDefaultStyle';
 import { getCategories } from '@/src/services/categoriesService';
-import { createProduct, getProducts } from '@/src/services/productsService';
-import { CreateProduct, ProductType } from "@/src/types/productType"
+import { Ionicons } from '@expo/vector-icons';
+import { createProduct, getProducts, updateProduct } from '@/src/services/productsService';
+import { CreateProductType, ProductType } from "@/src/types/productType"
 
 
 type CategoryDropdown = {
@@ -32,6 +33,9 @@ export default function ProductScreen() {
     const [price, setPrice] = useState('');
     const [open, setOpen] = useState(false);
     const [categories, setCategories] = useState<CategoryDropdown[]>([]);
+    const [isUpdate, setIsUpdate] = useState(false)
+    const [updateId, setUpdateId] = useState('')
+
 
     useEffect(() => {
         getCategories().then(data => {
@@ -46,15 +50,32 @@ export default function ProductScreen() {
         })
     }, [])
 
-
-    const addProduct = async () => {
+    const handleSave = async () => {
         if (!name || !category || !price) return;
 
-        const newProduct: CreateProduct = {
+        if(isUpdate){
+            return await editProduct()
+        }
+
+        return await addProduct()
+    }
+
+    const handleEdit = async (product: ProductType) => {
+        setIsUpdate(true)
+        setName(product.name)
+        setUpdateId(product.uuid)
+        setPrice(product.price.toString())
+        setCategory(product.category_uuid)
+        setModalVisible(true)
+    }
+
+    const addProduct = async () => {
+        const newProduct: CreateProductType = {
             name:name,
             price: parseFloat(price),
             category_uuid:category,
         };
+
         const response = await createProduct(newProduct)
         setProducts((prev) => [...prev, response]);
         setName('');
@@ -63,11 +84,34 @@ export default function ProductScreen() {
         setModalVisible(false);
     };
 
+    const editProduct = async () => {
+        const newProduct: CreateProductType = {
+            name:name,
+            price: parseFloat(price),
+            category_uuid:category,
+        };
+
+        const updatedProduct = await updateProduct(newProduct, updateId)
+        setProducts((prev) =>
+            prev.map((product) =>
+                product.uuid === updateId ? updatedProduct : product
+        ));
+
+        setIsUpdate(false)
+        setName('')
+        setUpdateId('')
+        setPrice('')
+        setCategory('')
+        setModalVisible(false)
+    }
     const renderItem = ({ item }: { item: ProductType }) => (
         <View style={styles.row}>
             <Text style={styles.cell}>{item.name}</Text>
             <Text style={styles.cell}>{item.category_name}</Text>
             <Text style={styles.cell}>R$ {item.price.toFixed(2)}</Text>
+            <TouchableOpacity onPress={() => handleEdit(item)}>
+                <Ionicons name="pencil" size={20} color="#0077b6" />
+            </TouchableOpacity>
         </View>
     );
 
@@ -99,7 +143,7 @@ export default function ProductScreen() {
             <Modal visible={modalVisible} animationType="slide" transparent>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Novo Produto</Text>
+                        <Text style={styles.modalTitle}>{isUpdate ? ("Atualizar") : "Novo"} Produto</Text>
                         <TextInput
                             placeholder="Nome do Produto"
                             value={name}
@@ -135,7 +179,7 @@ export default function ProductScreen() {
                         <View style={styles.modalButtons}>
                             <TouchableOpacity
                                 style={styles.saveButton}
-                                onPress={addProduct}
+                                onPress={handleSave}
                             >
                                 <Text style={styles.buttonText}>Salvar</Text>
                             </TouchableOpacity>
