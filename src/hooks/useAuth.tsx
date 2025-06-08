@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../services/api';
+import { setLogoutFunction } from './logoutHandler';
+import { useRouter } from 'expo-router';
 
 type AuthContextType = {
   token: string | null;
@@ -15,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     AsyncStorage.getItem('access_token').then((storedToken) => {
@@ -22,8 +25,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setToken(storedToken);
         setIsLoading(false);
       };
+      setIsLoading(false);
     });
   }, []);
+
 
   const login = async (username: string, password: string): Promise<boolean> => {
     try {
@@ -45,7 +50,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = async () => {
     await AsyncStorage.removeItem('access_token');
     setToken(null);
+    router.replace("/loginScreen")
   };
+
+  useEffect(() => {
+    setLogoutFunction(logout);
+  }, [logout]);
 
   return (
     <AuthContext.Provider value={{ token, isAuthenticated: !!token, isLoading, login, logout }}>

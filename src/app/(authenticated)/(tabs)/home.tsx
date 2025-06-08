@@ -12,9 +12,10 @@ import { getProducts } from '@/src/services/productsService';
 import { getCategories, getCategoriesNames } from '@/src/services/categoriesService';
 import { CartTable } from '@/src/components/cartProduct';
 import { CartProductMap } from '@/src/types/cartTypes';
+import { CreateSaleType, CreateListSaleType } from '@/src/types/salesType';
+import { createSale } from '@/src/services/salesService';
 
 export default function Home() {
-    console.log("aqui home")
     const [products, setProducts] = useState<ProductType[]>([]);
     const [categories, setCategories] = useState<string[]>([]);
     const [isLoadingListProducts, setisLoadingListProducts] = useState(true);
@@ -24,7 +25,7 @@ export default function Home() {
     const [cartProducts, setCartProducts] = useState<CartProductMap>({})
 
     useEffect(() => {
-       
+
         getProducts().then(data => {
             console.log(data)
             setProducts(data);
@@ -77,10 +78,21 @@ export default function Home() {
         });
     };
 
-    const handleSalesAddPress = (sales: CartProductMap) => {
-        // chamar endpoint
+    const handleSalesAddPress = async (sales: CartProductMap) => {
+        const list_sale_items: CreateSaleType[] = Object.entries(cartProducts).map(([uuid, product]) => ({
+            product_uuid: uuid,
+            quantity: product.quantity,
+        }));
 
-        setCartProducts({})
+        try{
+            await createSale({"list_sale_items": list_sale_items})
+            setCartProducts({})
+            alert("Adicionado com sucesso!")
+
+        } catch (error) {
+            alert("Erro ao adicionar "+ error)
+        }
+        
     }
 
     const renderProduct: ({ item }: { item: ProductType }) => JSX.Element = ({ item }) => (
@@ -137,7 +149,7 @@ export default function Home() {
             {
                 Object.keys(cartProducts).length ? (
                     <View style={styles.cartContainer}>
-                        <CartTable cartProducts={cartProducts} onAddPress={handleSalesAddPress}/>
+                        <CartTable cartProducts={cartProducts} onAddPress={handleSalesAddPress} />
                     </View>
                 ) : null
             }

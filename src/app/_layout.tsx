@@ -4,7 +4,7 @@ import { View, ActivityIndicator } from "react-native";
 
 const RootLayout = () => {
   const { isAuthenticated, isLoading } = useAuth();
-  console.log(isAuthenticated)
+  console.log(isAuthenticated, isLoading)
 
   if (isLoading) {
     return (

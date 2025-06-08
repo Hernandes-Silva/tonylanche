@@ -1,65 +1,72 @@
 import React, { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Platform,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 
+import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
-    const { login } = useAuth();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-    const handleLogin = async () => {
-        setLoading(true);
-        const success = await login(username, password);
-        setLoading(false);
-        if (!success) alert('Usuário ou senha incorretos');
-    };
+  const handleLogin = async () => {
+    setLoading(true);
+    const success = await login(username, password);
+    setLoading(false);
+    if (!success) {
+      alert("Usuário ou senha incorretos");
+    } else {
+      router.replace("/(authenticated)/(tabs)/home"); // navega diretamente
+    }
 
-    return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior={Platform.select({ ios: 'padding', android: undefined })}
-        >
-            <Text style={styles.title}>Finance Lanche</Text>
+  };
 
-            <View style={styles.inputContainer}>
-                <TextInput
-                    placeholder="Username"
-                    placeholderTextColor="#888"
-                    style={styles.input}
-                    value={username}
-                    onChangeText={setUsername}
-                    autoCapitalize="none"
-                />
-                <TextInput
-                    placeholder="Senha"
-                    placeholderTextColor="#888"
-                    style={styles.input}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                />
-            </View>
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.select({ ios: 'padding', android: undefined })}
+    >
+      <Text style={styles.title}>Finance Lanche</Text>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-                {loading ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <Text style={styles.buttonText}>Entrar</Text>
-                )}
-            </TouchableOpacity>
-        </KeyboardAvoidingView>
-    );
+      <View style={styles.inputContainer}>
+        <TextInput
+          placeholder="Username"
+          placeholderTextColor="#888"
+          style={styles.input}
+          value={username}
+          onChangeText={setUsername}
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Senha"
+          placeholderTextColor="#888"
+          style={styles.input}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </View>
+
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Entrar</Text>
+        )}
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
+  );
 }
 
 const PRIMARY_COLOR = '#0077b6';

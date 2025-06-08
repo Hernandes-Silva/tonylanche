@@ -1,5 +1,6 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { triggerLogout } from '../hooks/logoutHandler';
 
 const api = axios.create({
     baseURL: 'http://192.168.0.18:8000/api',
@@ -22,6 +23,7 @@ api.interceptors.response.use(
         // Se o access token expirar
         if (error.response?.status === 401 && !originalRequest._retry) {
             await AsyncStorage.removeItem('access_token');
+            triggerLogout();
             return Promise.reject(error);
         }
 
