@@ -13,9 +13,10 @@ type Props = {
 
 const DateInput: React.FC<Props> = ({ value, onChange, label }) => {
   const [showPicker, setShowPicker] = useState(false);
-
+  console.log(value)
   const handleChange = (_event: any, selectedDate?: Date) => {
     if (Platform.OS === 'android') setShowPicker(false);
+    console.log("data picker", selectedDate)
     if (selectedDate) {
       onChange(selectedDate);
     }

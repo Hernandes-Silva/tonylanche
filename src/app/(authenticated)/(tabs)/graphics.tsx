@@ -7,11 +7,12 @@ import FilterDropdown from '@/src/components/filterDropdown';
 import { FilterType, FilterDisplayMap } from '@/src/types/filterTypes';
 import DateInput from '@/src/components/dateInput';
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
-import { getGraphics } from '@/src/services/graphicsService';
+import { getGraphics, getLineChart } from '@/src/services/graphicsService';
 import { ChartData } from 'react-native-chart-kit/dist/HelperTypes';
 import { ResponseBarChartType, ResponseGraphics, ResponseLineChartType, ResponsePieChartType } from '@/src/types/graphicsTypes';
 import { generateUniqueColors } from '@/src/utils/utils';
 import CategorySalesTable from '@/src/components/categorySalesTable';
+import ProductsSalesTable from '@/src/components/productSalesTable';
 
 
 const screenWidth = Dimensions.get('window').width - 32;
@@ -43,6 +44,7 @@ export default function Graphics() {
   const [barChartData, setBarChartData] = useState<ChartData>(defaultCharData)
   const [pieChartData, setPieChartData] = useState<any[]>([])
   const [pieChartResponse, setPieChartResponse] = useState<any[]>([])
+  const [tableProductData, setTableProductData] = useState<any[]>([])
   const [selectedFilterDropdown, setSelectedFilterDropdwon] = useState<string>(FilterType.Day)
   const [finalDate, setfinalDate] = useState((new Date()))
   const [initialDate, setinitialDate] = useState(() => {
@@ -53,17 +55,20 @@ export default function Graphics() {
   });
 
   useEffect(() => {
-    getGraphics(selectedFilterDropdown, initialDate, finalDate).then(response => {
-      generateGraphicsData(response)
-      setIsloading(false)
+    getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
+      generateLineChartData(data);
     })
+    setIsloading(false)
   }, [])
 
-  const generateGraphicsData = (response: ResponseGraphics) => {
-    generateLineChartData(response.data.lineChart);
-    generateBarChartData(response.data.barChart);
-    generatePieChartData(response.data.pieChart);
-    setPieChartResponse(response.data.pieChart)
+  const generateGraphicsData = async () => {
+    getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
+      generateLineChartData(data);
+    })
+    // generateBarChartData(response.data.barChart);
+    // generatePieChartData(response.data.pieChart);
+    // setPieChartResponse(response.data.pieChart)
+    // setTableProductData(response.data.barChart)
   }
 
   const generateLineChartData = (data: ResponseLineChartType[]) => {
@@ -109,12 +114,10 @@ export default function Graphics() {
     setPieChartData(list_categories_data)
   }
 
-  const filterGraphics = () => {
+  const filterGraphics = async () => {
     if (isLoading == false) {
       setIsloading(true)
-      getGraphics(selectedFilterDropdown, initialDate, finalDate).then(data => {
-        setIsloading(false)
-      })
+      await generateGraphicsData()
 
     }
   }
@@ -246,6 +249,8 @@ export default function Graphics() {
             />
 
             <CategorySalesTable data={pieChartResponse} />
+            <Text style={styles.graphicsTitle}>🔵 Tabela de produtos</Text>
+            <ProductsSalesTable data={tableProductData} />
 
           </View>
         }

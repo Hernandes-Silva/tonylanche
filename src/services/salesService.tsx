@@ -2,9 +2,10 @@ import { historicProducts, products } from '../mocks/products';
 import { HistoricProduct, ProductType } from '@/src/types/productType';
 import { CreateListSaleType } from '../types/salesType';
 import api from './api';
+import { format_date } from '../utils/utils';
 
 export async function getSalesByDate(date: Date = new Date(), limit: Number = 100, offset: Number = 0): Promise<HistoricProduct[]> {
-    const response = await api.get('/sales/historic', {params:{"sale_date": date.toISOString().slice(0, 10)}});
+    const response = await api.get('/sales/historic', {params:{"sale_date": format_date(date).slice(0, 10)}});
     if (response.status != 200){
         console.log(response.statusText)
         throw new Error(response.statusText);

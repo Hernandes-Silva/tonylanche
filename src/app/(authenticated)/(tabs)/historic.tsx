@@ -27,6 +27,7 @@ export default function Historic() {
 
     useFocusEffect(
         useCallback(() => {
+            console.log(selectedDate)
             getSalesByDate(selectedDate).then(data => {
                 setProducts(data);
                 setisLoadingListProducts(false);
@@ -41,6 +42,7 @@ export default function Historic() {
     );
 
     useEffect(() => {
+        console.log(selectedDate)
         setProducts([])
         setisLoadingListProducts(true);
 

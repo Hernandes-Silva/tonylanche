@@ -13,7 +13,7 @@ type Props = {
 
 const ITEMS_PER_PAGE = 5;
 
-const CategorySalesTable: React.FC<Props> = ({ data }) => {
+const ProductsSalesTable: React.FC<Props> = ({ data }) => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === 'light';
 
@@ -74,7 +74,7 @@ const CategorySalesTable: React.FC<Props> = ({ data }) => {
       <View style={styles.table}>
         <View style={styles.headerRow}>
           <TouchableOpacity style={styles.cell} onPress={() => handleSort('productName')}>
-            <Text style={themeStyle}>Categoria</Text>
+            <Text style={themeStyle}>Produto</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.cell} onPress={() => handleSort('numberProductsSales')}>
             <Text style={themeStyle}>Qtde Vendida</Text>
@@ -110,7 +110,7 @@ const CategorySalesTable: React.FC<Props> = ({ data }) => {
 }
 
 
-export default CategorySalesTable;
+export default ProductsSalesTable;
 
 const styles = StyleSheet.create({
   container: {
