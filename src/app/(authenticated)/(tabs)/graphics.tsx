@@ -61,9 +61,16 @@ export default function Graphics() {
     setIsloading(false)
   }, [])
 
-  const generateGraphicsData = async () => {
+  const generateGraphicsData = () => {
+    if (initialDate > finalDate) {
+      console.log("aquiiii")
+      alert("data inicial maior que data final")
+      setIsloading(false)
+      return
+    }
     getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
       generateLineChartData(data);
+      setIsloading(false)
     })
     // generateBarChartData(response.data.barChart);
     // generatePieChartData(response.data.pieChart);
@@ -117,9 +124,23 @@ export default function Graphics() {
   const filterGraphics = async () => {
     if (isLoading == false) {
       setIsloading(true)
-      await generateGraphicsData()
+      generateGraphicsData()
 
     }
+  }
+
+  const getLineChartWidth = (numPoints: number): number => {
+    const baseWidth = screenWidth
+    const basePoints = 10
+
+    if (numPoints <= basePoints) {
+      return baseWidth
+    }
+
+    const extraPoints = numPoints - basePoints
+    const widthPerExtraPoint = 40
+
+    return baseWidth + extraPoints * widthPerExtraPoint
   }
 
   return (
@@ -159,7 +180,7 @@ export default function Graphics() {
               <ScrollView horizontal style={{ overflow: 'visible' }}>
                 <LineChart
                   data={lineChartData}
-                  width={screenWidth * 2}
+                  width={getLineChartWidth(lineChartData.labels.length)}
                   height={220}
                   fromZero
                   chartConfig={chartConfig}
@@ -194,7 +215,7 @@ export default function Graphics() {
               <ScrollView horizontal style={{ overflow: 'visible' }}>
                 <LineChart
                   data={lineChartByProductData}
-                  width={screenWidth * 2}
+                  width={getLineChartWidth(lineChartData.labels.length)}
                   height={220}
                   yAxisLabel="$"
                   fromZero
