@@ -8,7 +8,7 @@ import FilterDropdown from '@/src/components/filterDropdown';
 import { FilterType, FilterDisplayMap } from '@/src/types/filterTypes';
 import DateInput from '@/src/components/dateInput';
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
-import { getBarChart, getGraphics, getLineChart } from '@/src/services/graphicsService';
+import { getBarChart, getLineChart, getPieChart } from '@/src/services/graphicsService';
 import { ChartData } from 'react-native-chart-kit/dist/HelperTypes';
 import { ResponseBarChartType, ResponseGraphics, ResponseLineChartType, ResponsePieChartType } from '@/src/types/graphicsTypes';
 import { generateUniqueColors } from '@/src/utils/utils';
@@ -40,6 +40,8 @@ const defaultCharData = {
 }
 export default function Graphics() {
   const [isLoading, setIsloading] = useState(true)
+  const [isLoadingProductTable, setIsloadingProductTable] = useState(true)
+  const [isLoadingCateoryTable, setIsloadingCateoryTable] = useState(true)
   const [lineChartData, setLineChartData] = useState<ChartData>(defaultCharData)
   const [lineChartByProductData, setLineChartByProductData] = useState<ChartData>(defaultCharData)
   const [barChartData, setBarChartData] = useState<ChartData>(defaultCharData)
@@ -57,14 +59,7 @@ export default function Graphics() {
 
   useFocusEffect(
     useCallback(() => {
-      getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
-        generateLineChartData(data);
-      })
-      getBarChart(initialDate, finalDate).then(data => {
-        generateBarChartData(data);
-        setTableProductData(data)
-      })
-      setIsloading(false)
+      generateGraphicsData()
     }, [])
   );
 
@@ -72,18 +67,24 @@ export default function Graphics() {
     if (initialDate > finalDate) {
       alert("data inicial maior que data final")
       setIsloading(false)
+      setIsloadingProductTable(false)
+      setIsloadingCateoryTable(false)
       return
     }
     getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
       generateLineChartData(data);
-      setIsloading(false)
     })
     getBarChart(initialDate, finalDate).then(data => {
       generateBarChartData(data);
       setTableProductData(data)
+      setIsloadingProductTable(false)
     })
-    // generatePieChartData(response.data.pieChart);
-    // setPieChartResponse(response.data.pieChart)
+    getPieChart(initialDate, finalDate).then(data => {
+      generatePieChartData(data);
+      setPieChartResponse(data)
+      setIsloadingCateoryTable(false)
+    })
+    setIsloading(false)
   }
 
   const generateLineChartData = (data: ResponseLineChartType[]) => {
@@ -132,6 +133,8 @@ export default function Graphics() {
   const filterGraphics = async () => {
     if (isLoading == false) {
       setIsloading(true)
+      setIsloadingProductTable(true)
+      setIsloadingCateoryTable(true)
       generateGraphicsData()
 
     }
@@ -277,12 +280,16 @@ export default function Graphics() {
               style={styles.graphicsStyles}
             />
 
-            <CategorySalesTable data={pieChartResponse} />
-            <Text style={styles.graphicsTitle}>🔵 Tabela de produtos</Text>
-            <ProductsSalesTable data={tableProductData} />
-
           </View>
         }
+          {isLoadingCateoryTable ? (<ActivityIndicator style={{ marginTop: 40 }} />):
+            <CategorySalesTable data={pieChartResponse} />
+          }
+
+          <Text style={styles.graphicsTitle}>🔵 Tabela de produtos</Text>
+          {isLoadingProductTable ? (<ActivityIndicator style={{ marginTop: 40 }} />):
+            <ProductsSalesTable data={tableProductData} />
+          }
       </ScrollView>
     </ContainerAuthenticated>
   );

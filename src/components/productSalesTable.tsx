@@ -21,7 +21,7 @@ const ProductsSalesTable: React.FC<Props> = ({ data }) => {
   const [sortKey, setSortKey] = useState<SortKey>('productName');
   const [sortAsc, setSortAsc] = useState(true);
   const [page, setPage] = useState(0);
-  console.log("entrou aquii", data)
+
   const filteredData = useMemo(() => {
     return data.filter(item =>
       item.productName.toLowerCase().includes(search.toLowerCase())

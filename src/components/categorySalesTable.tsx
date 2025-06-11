@@ -1,12 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, useColorScheme } from 'react-native';
 import roundedCardWithShadow from '@/src//styles/roundedCardWithShadow';
+import { ResponsePieChartType } from '../types/graphicsTypes';
 
-type ResponsePieChartType = {
-  categoryName: string;
-  numberProductsSales: number;
-  percentageProductsSales: number;
-};
+
 
 type SortKey = keyof ResponsePieChartType;
 
@@ -43,7 +40,7 @@ const CategorySalesTable: React.FC<Props> = ({ data }) => {
           : String(bVal).localeCompare(String(aVal));
       }
     });
-  }, [filteredData, sortKey, sortAsc]);
+  }, [filteredData, sortKey, sortAsc, data]);
 
   const paginatedData = sortedData.slice(
     page * ITEMS_PER_PAGE,
@@ -85,13 +82,17 @@ const CategorySalesTable: React.FC<Props> = ({ data }) => {
           <TouchableOpacity style={styles.cell} onPress={() => handleSort('percentageProductsSales')}>
             <Text style={themeStyle}>% Vendas</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.cell} onPress={() => handleSort('valueProductsSales')}>
+            <Text style={themeStyle}>$ Valor</Text>
+          </TouchableOpacity>
         </View>
 
         {paginatedData.map((item, index) => (
           <View key={index} style={styles.dataRow}>
             <Text style={[styles.cell, themeStyle]}>{item.categoryName}</Text>
-            <Text style={[styles.cell, themeStyle]}>{item.numberProductsSales}</Text>
+            <Text style={[styles.cell, themeStyle]}>{item.numberProductsSales.toString()}</Text>
             <Text style={[styles.cell, themeStyle]}>{item.percentageProductsSales.toFixed(1)}%</Text>
+            <Text style={[styles.cell, themeStyle]}>{item.valueProductsSales.toFixed(1)}</Text>
           </View>
         ))}
       </View>

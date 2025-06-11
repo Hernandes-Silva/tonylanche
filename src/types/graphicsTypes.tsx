@@ -15,6 +15,7 @@ export type ResponseBarChartType = {
 export type ResponsePieChartType = {
   categoryName: string,
   numberProductsSales: Number,
+  valueProductsSales: Number,
   percentageProductsSales: Number,
 }
 
