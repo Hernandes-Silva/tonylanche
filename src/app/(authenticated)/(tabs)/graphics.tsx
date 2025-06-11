@@ -1,13 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { ScrollView, Dimensions, Text, View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
+import { useFocusEffect } from '@react-navigation/native';
 
 import ContainerAuthenticated from '@/src/components/containerAuthenticated';
 import FilterDropdown from '@/src/components/filterDropdown';
 import { FilterType, FilterDisplayMap } from '@/src/types/filterTypes';
 import DateInput from '@/src/components/dateInput';
 import roundedCardWithShadow from '@/src/styles/roundedCardWithShadow';
-import { getGraphics, getLineChart } from '@/src/services/graphicsService';
+import { getBarChart, getGraphics, getLineChart } from '@/src/services/graphicsService';
 import { ChartData } from 'react-native-chart-kit/dist/HelperTypes';
 import { ResponseBarChartType, ResponseGraphics, ResponseLineChartType, ResponsePieChartType } from '@/src/types/graphicsTypes';
 import { generateUniqueColors } from '@/src/utils/utils';
@@ -54,16 +55,21 @@ export default function Graphics() {
     return date;
   });
 
-  useEffect(() => {
-    getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
-      generateLineChartData(data);
-    })
-    setIsloading(false)
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      getLineChart(selectedFilterDropdown, initialDate, finalDate).then(data => {
+        generateLineChartData(data);
+      })
+      getBarChart(initialDate, finalDate).then(data => {
+        generateBarChartData(data);
+        setTableProductData(data)
+      })
+      setIsloading(false)
+    }, [])
+  );
 
   const generateGraphicsData = () => {
     if (initialDate > finalDate) {
-      console.log("aquiiii")
       alert("data inicial maior que data final")
       setIsloading(false)
       return
@@ -72,10 +78,12 @@ export default function Graphics() {
       generateLineChartData(data);
       setIsloading(false)
     })
-    // generateBarChartData(response.data.barChart);
+    getBarChart(initialDate, finalDate).then(data => {
+      generateBarChartData(data);
+      setTableProductData(data)
+    })
     // generatePieChartData(response.data.pieChart);
     // setPieChartResponse(response.data.pieChart)
-    // setTableProductData(response.data.barChart)
   }
 
   const generateLineChartData = (data: ResponseLineChartType[]) => {

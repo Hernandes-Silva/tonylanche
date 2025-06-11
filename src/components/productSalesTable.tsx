@@ -21,7 +21,7 @@ const ProductsSalesTable: React.FC<Props> = ({ data }) => {
   const [sortKey, setSortKey] = useState<SortKey>('productName');
   const [sortAsc, setSortAsc] = useState(true);
   const [page, setPage] = useState(0);
-
+  console.log("entrou aquii", data)
   const filteredData = useMemo(() => {
     return data.filter(item =>
       item.productName.toLowerCase().includes(search.toLowerCase())
@@ -82,6 +82,9 @@ const ProductsSalesTable: React.FC<Props> = ({ data }) => {
           <TouchableOpacity style={styles.cell} onPress={() => handleSort('percentageProductsSales')}>
             <Text style={themeStyle}>% Vendas</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.cell} onPress={() => handleSort('valueProductsSales')}>
+            <Text style={themeStyle}>$ Valor</Text>
+          </TouchableOpacity>
         </View>
 
         {paginatedData.map((item, index) => (
@@ -89,6 +92,7 @@ const ProductsSalesTable: React.FC<Props> = ({ data }) => {
             <Text style={[styles.cell, themeStyle]}>{item.productName}</Text>
             <Text style={[styles.cell, themeStyle]}>{item.numberProductsSales.toString()}</Text>
             <Text style={[styles.cell, themeStyle]}>{item.percentageProductsSales.toFixed(1)}%</Text>
+            <Text style={[styles.cell, themeStyle]}>{item.valueProductsSales.toFixed(1)}</Text>
           </View>
         ))}
       </View>
