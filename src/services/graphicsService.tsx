@@ -13,8 +13,7 @@ export async function getLineChart(filterType: string, initDate: Date , endDate:
     return response.data;
 }
 
-
-export async function getBarChart( initDate: Date , endDate: Date): Promise<ResponseBarChartType[]> {    
+export async function getBarChart(initDate: Date , endDate: Date): Promise<ResponseBarChartType[]> {    
     const response = await api.post('/sales/chart/bar',{
         start_date: format_date(initDate).slice(0, 10)+"T00:00:00.000Z",
         end_date: format_date(endDate).slice(0, 10)+"T00:00:00.000Z",
@@ -23,7 +22,7 @@ export async function getBarChart( initDate: Date , endDate: Date): Promise<Resp
     return response.data;
 }
 
-export async function getPieChart( initDate: Date , endDate: Date): Promise<ResponsePieChartType[]> {    
+export async function getPieChart(initDate: Date , endDate: Date): Promise<ResponsePieChartType[]> {    
     const response = await api.post('/sales/chart/pie',{
         start_date: format_date(initDate).slice(0, 10)+"T00:00:00.000Z",
         end_date: format_date(endDate).slice(0, 10)+"T00:00:00.000Z",
